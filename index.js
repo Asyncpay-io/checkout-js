@@ -33,7 +33,7 @@ const validateCustomer = (customer) => {
   };
 };
 
-export const AsyncpayCheckout = ({
+export const AsyncpayCheckout = async ({
   publicKey,
   amount,
   description,
@@ -85,6 +85,39 @@ export const AsyncpayCheckout = ({
     // Validate the entire customer object and return an object containing the customer object that we'll later spread and send into the URL
     customerOBJ = validateCustomer(customer);
   }
+  if (!publicKey) {
+    throw Error(
+      "Please provide a public key `publicKey` to the AsyncpayCheckout function."
+    );
+  }
+  // Validate Amount
+  // Validate the description
+  // Validate the other potential parameters
+  // Figure out if (and how) we should use idempotentency
+
+  const response = await fetch(
+    `http://localhost/v1/sdk/initialize-payment-request`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        ...customerOBJ,
+        amount: parseFloat(amount),
+        description,
+        choose_payment_channel: false,
+      }),
+      headers: {
+        Authentication: `Bearer ${publicKey}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const body = await response.json();
+  if (!response.ok) {
+    throw Error(`Error-Code: ${body.error_code} - ` + body.error_description);
+  } else {
+  }
+  console.log(response);
+
   const checkoutIframeWrapper = document.createElement("div");
   checkoutIframeWrapper.id = "asyncpay-checkout-wrapper";
   checkoutIframeWrapper.style.position = "fixed";
@@ -96,14 +129,11 @@ export const AsyncpayCheckout = ({
   checkoutIframeWrapper.style.border = "none";
   checkoutIframeWrapper.style.background = "transparent";
   const iframe = document.createElement("iframe");
-  iframe.src =
-    "http://localhost:5173/checkout/6a43116ff59c1065c435c87f10977191298c";
+  iframe.src = body.data.action;
   iframe.width = "100%";
   iframe.height = "100%";
   iframe.style.border = "none";
-  iframe.onload = () => {
-    alert("Dancing in the sunlight");
-  };
+  iframe.onload = () => {};
   checkoutIframeWrapper.appendChild(iframe);
   document.body.appendChild(checkoutIframeWrapper);
 
