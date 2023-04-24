@@ -1,3 +1,65 @@
+const svg = `<svg width="80px" height="80px" display="block" shape-rendering="auto" style="margin:auto" preserveAspectRatio="xMidYMid" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<g transform="rotate(0 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.9166666666666666s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(30 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.8333333333333334s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(60 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.75s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(90 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.6666666666666666s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(120 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.5833333333333334s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(150 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.5s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(180 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.4166666666666667s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(210 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.3333333333333333s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(240 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.25s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(270 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.16666666666666666s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(300 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="-0.08333333333333333s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+<g transform="rotate(330 50 50)">
+<rect x="47" y="24" width="6" height="12" rx="3" ry="6" fill="#1059bc">
+<animate attributeName="opacity" begin="0s" dur="1s" keyTimes="0;1" repeatCount="indefinite" values="1;0"/>
+</rect>
+</g>
+</svg>`;
 const validateCustomer = (customer) => {
   if (!customer || (customer && typeof customer !== "object")) {
     throw Error(
@@ -40,7 +102,13 @@ export const AsyncpayCheckout = async ({
   customerEmail,
   customerUUID,
   customer,
+  onComplete,
   paymentChannel,
+  redirectUrl,
+  cancelUrl,
+  onCancel,
+  onSuccess,
+  logo,
   ...args
 }) => {
   /**
@@ -103,7 +171,8 @@ export const AsyncpayCheckout = async ({
         ...customerOBJ,
         amount: parseFloat(amount),
         description,
-        choose_payment_channel: false,
+        // payment_channel: "stripe",
+        choose_payment_channel: true,
       }),
       headers: {
         Authentication: `Bearer ${publicKey}`,
@@ -114,37 +183,62 @@ export const AsyncpayCheckout = async ({
   const body = await response.json();
   if (!response.ok) {
     throw Error(`Error-Code: ${body.error_code} - ` + body.error_description);
-  } else {
   }
-  console.log(response);
+  if (body.data.should_redirect) {
+    location.href = body.data.action;
+  } else {
+    const checkoutIframeWrapper = document.createElement("div");
+    checkoutIframeWrapper.id = "asyncpay-checkout-wrapper";
+    checkoutIframeWrapper.style.position = "fixed";
+    checkoutIframeWrapper.style.top = "0";
+    checkoutIframeWrapper.style.left = "0";
+    checkoutIframeWrapper.style.width = "100%";
+    checkoutIframeWrapper.style.height = "100%";
+    checkoutIframeWrapper.style.zIndex = "99999999999";
+    checkoutIframeWrapper.style.border = "none";
+    checkoutIframeWrapper.style.background = "transparent";
+    const loader = document.createElement("div");
+    loader.style.display = "flex";
+    loader.style.alignItems = "center";
+    loader.style.justifyContent = "center";
+    loader.style.position = "fixed";
+    loader.style.top = "0";
+    loader.style.left = "0";
+    loader.style.zIndex = "99999";
+    loader.style.height = "100%";
+    loader.style.width = "100%";
+    loader.innerHTML = svg;
+    checkoutIframeWrapper.appendChild(loader);
+    const iframe = document.createElement("iframe");
+    iframe.style.opacity = "0";
+    iframe.style.transition = ".8s";
+    iframe.src = body.data.action + `?publickey=${publicKey}`;
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.style.border = "none";
+    iframe.onload = () => {
+      loader.style.display = "none";
+      iframe.style.opacity = "1";
+    };
+    checkoutIframeWrapper.appendChild(iframe);
+    document.body.appendChild(checkoutIframeWrapper);
 
-  const checkoutIframeWrapper = document.createElement("div");
-  checkoutIframeWrapper.id = "asyncpay-checkout-wrapper";
-  checkoutIframeWrapper.style.position = "fixed";
-  checkoutIframeWrapper.style.top = "0";
-  checkoutIframeWrapper.style.left = "0";
-  checkoutIframeWrapper.style.width = "100%";
-  checkoutIframeWrapper.style.height = "100%";
-  checkoutIframeWrapper.style.zIndex = "99999999999";
-  checkoutIframeWrapper.style.border = "none";
-  checkoutIframeWrapper.style.background = "transparent";
-  const iframe = document.createElement("iframe");
-  iframe.src = body.data.action;
-  iframe.width = "100%";
-  iframe.height = "100%";
-  iframe.style.border = "none";
-  iframe.onload = () => {};
-  checkoutIframeWrapper.appendChild(iframe);
-  document.body.appendChild(checkoutIframeWrapper);
-
-  window.addEventListener("message", function (event) {
-    console.log(event);
-    switch (event.data) {
-      case "closeIframe":
-        checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
-        break;
-      default:
-        console.log("I shall close the iFrame");
-    }
-  });
+    window.addEventListener("message", function (event) {
+      console.log(event);
+      switch (event.data) {
+        case "closeIframe":
+          checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
+          break;
+        case "showLoader":
+          iframe.style.opacity = "0";
+          loader.style.display = "flex";
+          break;
+        default:
+          if (event.data.startsWith("redirectTo:")) {
+            location.href = event.data.split("redirectTo:")[1];
+          }
+          console.log("I shall close the iFrame");
+      }
+    });
+  }
 };
