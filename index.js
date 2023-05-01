@@ -60,6 +60,7 @@ const svg = `<svg width="80px" height="80px" display="block" shape-rendering="au
 </rect>
 </g>
 </svg>`;
+
 const validateCustomer = (customer) => {
   if (!customer || (customer && typeof customer !== "object")) {
     throw Error(
@@ -102,13 +103,13 @@ export const AsyncpayCheckout = async ({
   customerEmail,
   customerUUID,
   customer,
-  onComplete,
   paymentChannel,
-  redirectUrl,
-  cancelUrl,
+  successURL,
+  cancelURL,
   onCancel,
   onSuccess,
   logo,
+  environment = "dev",
   ...args
 }) => {
   /**
@@ -124,6 +125,20 @@ export const AsyncpayCheckout = async ({
   // 2. Validate the whole customer object if it exists. Write a separate function that loops through the object and checks for the properties we expect and ensures that they work how they are supposed to
 
   let customerOBJ = {};
+
+  let baseURL;
+
+  switch (environment) {
+    case "local":
+      baseURL = "http://localhost";
+      break;
+    case "prod":
+      baseURL = "https://api.asyncpay.io";
+      break;
+    case "dev":
+    default:
+      baseURL = "https://api.dev.asyncpay.io";
+  }
 
   if (customerEmail) {
     // Validate email and return an object containing just the customer_email that we'll later spread into send in the URL
@@ -158,28 +173,27 @@ export const AsyncpayCheckout = async ({
       "Please provide a public key `publicKey` to the AsyncpayCheckout function."
     );
   }
+
   // Validate Amount
   // Validate the description
   // Validate the other potential parameters
   // Figure out if (and how) we should use idempotentency
 
-  const response = await fetch(
-    `http://localhost/v1/sdk/initialize-payment-request`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        ...customerOBJ,
-        amount: parseFloat(amount),
-        description,
-        // payment_channel: "stripe",
-        choose_payment_channel: true,
-      }),
-      headers: {
-        Authentication: `Bearer ${publicKey}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${baseURL}/v1/sdk/initialize-payment-request`, {
+    method: "POST",
+    body: JSON.stringify({
+      ...customerOBJ,
+      amount: parseFloat(amount),
+      description,
+      payment_channel: paymentChannel,
+      success_redirect_url: successURL,
+      cancel_redirect_url: cancelURL,
+    }),
+    headers: {
+      Authentication: `Bearer ${publicKey}`,
+      "Content-Type": "application/json",
+    },
+  });
   const body = await response.json();
   if (!response.ok) {
     throw Error(`Error-Code: ${body.error_code} - ` + body.error_description);
@@ -224,20 +238,39 @@ export const AsyncpayCheckout = async ({
     document.body.appendChild(checkoutIframeWrapper);
 
     window.addEventListener("message", function (event) {
-      console.log(event);
-      switch (event.data) {
+      console.debug("RECEIVED DATA IS", event.data);
+      let eventData = event.data;
+      if (typeof eventData === "string") {
+        eventData = JSON.parse(eventData);
+      }
+      switch (eventData.eventType) {
         case "closeIframe":
           checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
+          if (cancelURL) {
+            location.href = cancelURL;
+          } else {
+            if (onCancel && typeof onCancel === "function") {
+              onCancel();
+            }
+          }
           break;
         case "showLoader":
           iframe.style.opacity = "0";
           loader.style.display = "flex";
           break;
-        default:
-          if (event.data.startsWith("redirectTo:")) {
-            location.href = event.data.split("redirectTo:")[1];
+        case "paymentSuccessful":
+          if (successURL) {
+            location.href = successURL;
+          } else {
+            if (onSuccess && typeof onSuccess === "function") {
+              onSuccess();
+            }
           }
-          console.log("I shall close the iFrame");
+          break;
+        case "redirect":
+          location.href = eventData.url;
+          break;
+        default:
       }
     });
   }
