@@ -70,3 +70,7 @@ logo,
 | `onCancel`       | `false`                                                  | A javascript function to call after the user cancels the checkout page                                                                                              |
 | `onSuccess`      | `false`                                                  | A javascript function to call after the user has successfully completed checkout                                                                                    |
 | `logo`           | `false`                                                  | The logo to show up on the payment page if you want to override the logo set on the dashboard                                                                       |
+
+## Support
+Feel free to send a message to `info@asyncpay.io` for any support regarding using this SDK or create an issue on [Github](https://github.com/Asyncpay-io/checkout-js/issues)
+
