@@ -8,7 +8,7 @@ This SDK allows you to seamlessly connect to multiple payment channels such as F
 
 ## Demo
 
-You can see a demo of our checkout experience here: [https://checkout.dev.asyncpay.io](https://checkout.dev.asyncpay.io)
+You can see a demo of our checkout experience here: [https://asyncpay.io/demo](https://asyncpay.io/demo)
 
 ## Requirements
 
