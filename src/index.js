@@ -7,6 +7,7 @@ import {
 
 export const AsyncpayCheckout = async ({
   publicKey,
+  reference,
   amount,
   description,
   customerEmail,
@@ -16,6 +17,7 @@ export const AsyncpayCheckout = async ({
   successURL,
   cancelURL,
   onCancel,
+  onClose,
   onSuccess,
   logo,
   environment = "dev",
@@ -137,13 +139,16 @@ export const AsyncpayCheckout = async ({
       switch (eventData.eventType) {
         case "closeIframe":
           checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
-          if (cancelURL) {
-            location.href = cancelURL;
-          } else {
-            if (onCancel && typeof onCancel === "function") {
-              onCancel();
+          if (eventData.intent === "cancel") {
+            if (cancelURL) {
+              location.href = cancelURL;
+            } else {
+              if (onCancel && typeof onCancel === "function") {
+                onCancel();
+              }
             }
           }
+          onClose();
           break;
         case "showLoader":
           iframe.style.opacity = "0";
