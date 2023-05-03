@@ -57,7 +57,7 @@ onSuccess,
 logo,
 
 | Name             | Required                                                 | Description                                                                                                                                                         |
-| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------| -------------------------------------------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `publicKey`      | `true`                                                   | The public key of your business gotten from the [Asyncpay](https://asyncpay.io) dashboard                                                                           |
 | `amount`         | `true`                                                   | The amount you want to charge the user                                                                                                                              |
 | `description`    | `false`                                                  | The description of the transaction                                                                                                                                  |
@@ -68,6 +68,7 @@ logo,
 | `successURL`     | `false`                                                  | The url to redirect the user to after a successful payment                                                                                                          |
 | `cancelURL`      | `false`                                                  | The url to redirect the customer to if the user cancels the checkout page                                                                                           |
 | `onCancel`       | `false`                                                  | A javascript function to call after the user cancels the checkout page                                                                                              |
+| `onClose`        | `false`                                                  | A javascript function to call whenever the checkout page closes irrespective of why the checkout page closed.                                                       |
 | `onSuccess`      | `false`                                                  | A javascript function to call after the user has successfully completed checkout                                                                                    |
 | `logo`           | `false`                                                  | The logo to show up on the payment page if you want to override the logo set on the dashboard                                                                       |
 
