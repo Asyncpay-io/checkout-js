@@ -81,6 +81,7 @@ export const AsyncpayCheckout = async ({
       payment_channel: paymentChannel,
       success_redirect_url: successURL,
       cancel_redirect_url: cancelURL,
+      reference,
     }),
     headers: {
       Authentication: `Bearer ${publicKey}`,
@@ -159,7 +160,7 @@ export const AsyncpayCheckout = async ({
             location.href = successURL;
           } else {
             if (onSuccess && typeof onSuccess === "function") {
-              onSuccess();
+              onSuccess(event.paymentRequest);
             }
           }
           break;
