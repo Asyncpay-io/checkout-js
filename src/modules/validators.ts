@@ -1,4 +1,6 @@
-export const validateEmail = (email) => {
+import { Customer } from "../types";
+
+export const validateEmail = (email: string) => {
   if (
     String(email)
       .toLowerCase()
@@ -12,7 +14,7 @@ export const validateEmail = (email) => {
   }
 };
 
-export const validateUUID = (uuid) => {
+export const validateUUID = (uuid: string) => {
   if (
     String(uuid).match(
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
@@ -23,7 +25,7 @@ export const validateUUID = (uuid) => {
     throw Error("Please enter a valid customer_uuid");
   }
 };
-export const validateCustomer = (customer) => {
+export const validateCustomer = (customer: Customer) => {
   if (!customer || (customer && typeof customer !== "object")) {
     throw Error(
       "Please enter the customer information. The function requires either the `customer_email`, `customer_uuid` or a `customer` object containing all the fields of the customer. "
@@ -34,11 +36,11 @@ export const validateCustomer = (customer) => {
   if (!email) {
     throw Error("email is a required field of the customer object");
   }
-  validateEmail(email)
-  if (firstName && firstName.split(" ") > 1) {
+  validateEmail(email);
+  if (firstName && firstName.split(" ").length > 1) {
     throw Error("The first name can only contain one word.");
   }
-  if (lastName && lastName.split(" ") > 1) {
+  if (lastName && lastName.split(" ").length > 1) {
     throw Error("The last name can only contain one word.");
   }
   return {

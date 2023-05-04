@@ -4,6 +4,7 @@ import {
   validateEmail,
   validateUUID,
 } from "./modules/validators";
+import { Customer, AsyncpayCheckoutInterface } from "./types";
 
 export const AsyncpayCheckout = async ({
   publicKey,
@@ -22,7 +23,7 @@ export const AsyncpayCheckout = async ({
   logo,
   environment = "dev",
   ...args
-}) => {
+}: AsyncpayCheckoutInterface) => {
   /**
    * 1. Validate arguments
    * 2. Generate checkout url
@@ -76,7 +77,7 @@ export const AsyncpayCheckout = async ({
     method: "POST",
     body: JSON.stringify({
       ...customerOBJ,
-      amount: parseFloat(amount),
+      amount: typeof amount === "number" ? amount : parseFloat(amount),
       description,
       payment_channel: paymentChannel,
       success_redirect_url: successURL,
@@ -139,7 +140,9 @@ export const AsyncpayCheckout = async ({
       }
       switch (eventData.eventType) {
         case "closeIframe":
-          checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
+          if (checkoutIframeWrapper && checkoutIframeWrapper.parentNode) {
+            checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
+          }
           if (eventData.intent === "cancel") {
             if (cancelURL) {
               location.href = cancelURL;
@@ -149,7 +152,9 @@ export const AsyncpayCheckout = async ({
               }
             }
           }
-          onClose();
+          if (onClose && typeof onClose === "function") {
+            onClose();
+          }
           break;
         case "showLoader":
           iframe.style.opacity = "0";
@@ -160,7 +165,7 @@ export const AsyncpayCheckout = async ({
             location.href = successURL;
           } else {
             if (onSuccess && typeof onSuccess === "function") {
-              onSuccess(event.paymentRequest);
+              onSuccess(eventData.paymentRequest);
             }
           }
           break;

@@ -1,13 +1,8 @@
-import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
 export default {
-  input: "src/index.js",
-  plugins: [
-    getBabelOutputPlugin({
-      presets: ["@babel/preset-env"],
-    }),
-    terser(),
-  ],
+  input: "src/index.ts",
+  plugins: [typescript(), terser()],
   output: [
     {
       file: "dist/bundle.js",

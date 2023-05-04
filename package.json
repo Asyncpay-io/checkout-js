@@ -1,9 +1,10 @@
 {
   "name": "@asyncpay/checkout",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "description": "JavaScript SDK for running the Asyncpay checkout flow",
   "main": "dist/bundle.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config"
@@ -21,10 +22,11 @@
   "author": "Asyncpay",
   "license": "BSL-1.0",
   "devDependencies": {
-    "@babel/preset-env": "^7.21.5",
-    "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-terser": "^0.4.1",
+    "@rollup/plugin-typescript": "^11.1.0",
     "prettier": "^2.8.7",
-    "rollup": "^3.21.2"
+    "rollup": "^3.21.2",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.4"
   }
 }
