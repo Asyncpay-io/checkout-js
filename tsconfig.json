@@ -6,7 +6,7 @@
 
   "compilerOptions": {
     "lib": ["esnext", "DOM"],
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es2022",
 
     "strict": true,
