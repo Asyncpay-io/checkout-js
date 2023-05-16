@@ -4,7 +4,7 @@ import {
   validateEmail,
   validateUUID,
 } from "./modules/validators";
-import { Customer, AsyncpayCheckoutInterface } from "./types";
+import { Customer, AsyncpayCheckoutInterface } from "../types";
 
 export const AsyncpayCheckout = async ({
   publicKey,

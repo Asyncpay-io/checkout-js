@@ -4,7 +4,8 @@
 
 # Asyncpay Checkout SDK
 
-This SDK allows you to seamlessly connect to multiple payment channels such as Flutterwave, Paystack and Stripe and create a checkout experience with only one integration.
+This SDK allows you to seamlessly connect to multiple payment channels such as Flutterwave, Paystack and Stripe and
+create a checkout experience with only one integration.
 
 ## Demo
 
@@ -12,9 +13,12 @@ You can see a demo of our checkout experience here: [https://asyncpay.io/demo](h
 
 ## Requirements
 
-1. **An Asyncpay account -** Head to [Asyncpay](https://asyncpay.io) to create an account and gain access to your dashboard.
-2. **Connect your payment Channels -** The dashboard provides you a means to connect your multiple payment channels to your business. Create accounts on the payment channels you wish to integrate and provide your keys on the dashboard.
-3. **Integrate this SDK -** After connecting the payment channels you can initialize payments with the Asyncpay public key found on your dashboard.
+1. **An Asyncpay account -** Head to [Asyncpay](https://asyncpay.io) to create an account and gain access to your
+   dashboard.
+2. **Connect your payment Channels -** The dashboard provides you a means to connect your multiple payment channels to
+   your business. Create accounts on the payment channels you wish to integrate and provide your keys on the dashboard.
+3. **Integrate this SDK -** After connecting the payment channels you can initialize payments with the Asyncpay public
+   key found on your dashboard.
 
 ## Steps for Integrating this SDK
 
@@ -27,13 +31,13 @@ $ npm install @asyncpay/checkout-js
 2. The SDK exports a function that can be invoked at anytime to load a checkout experience.
 
 ```js
-import { AsyncpayCheckout } from "@asyncpay/checkout-js";
+import {AsyncpayCheckout} from "@asyncpay/checkout-js";
 
 AsyncpayCheckout({
-  publicKey:
-    "async_skt_960e42272225b293eb0ebb2d4d164f12ee12f78d5ed3b2deb75d065a7bef",
-  email: "info@asyncpay.io",
-  amount: 450,
+    publicKey:
+        "async_skt_960e42272225b293eb0ebb2d4d164f12ee12f78d5ed3b2deb75d065a7bef",
+    email: "info@asyncpay.io",
+    amount: 450,
 });
 ```
 
@@ -73,6 +77,27 @@ logo,
 | `onSuccess`      | `false`                                                  | A javascript function to call after the user has successfully completed checkout                                                                                    |
 | `logo`           | `false`                                                  | The logo to show up on the payment page if you want to override the logo set on the dashboard                                                                       |
 
-## Support
-Feel free to send a message to `info@asyncpay.io` for any support regarding using this SDK or create an issue on [Github](https://github.com/Asyncpay-io/checkout-js/issues)
+## Available Customer Object Options
 
+The table below shows the properties that can be attached to a `customer` object if you choose to use that to initialize
+the SDK.
+
+| Name           | Required                    |
+|----------------|-----------------------------|
+| `firstName`    | `true`                      |
+| `lastName`     | `true`                      |
+| `email`        | `true`                      |
+| `phoneCode`    | Required if email is absent |
+| `phoneNumber`  | Required if email is absent |
+| `phoneCode`    | Required if email is absent |
+| `addressLine1` | `false`                     |
+| `addressLine2` | `false`                     |
+| `city`         | `false`                     |
+| `state`        | `false`                     |
+| `country`      | `false`                     |
+| `zip`          | `false`                     |
+
+## Support
+
+Feel free to send a message to `info@asyncpay.io` for any support regarding using this SDK or create an issue
+on [Github](https://github.com/Asyncpay-io/checkout-js/issues)

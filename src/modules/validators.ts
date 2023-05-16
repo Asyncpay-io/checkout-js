@@ -1,4 +1,4 @@
-import { Customer } from "../types";
+import { Customer } from "../../types";
 
 export const validateEmail = (email: string) => {
   if (
