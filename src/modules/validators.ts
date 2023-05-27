@@ -44,8 +44,10 @@ export const validateCustomer = (customer: Customer) => {
     throw Error("The last name can only contain one word.");
   }
   return {
-    ...(firstName ? { first_name: firstName } : {}),
-    ...(lastName ? { last_name: lastName } : {}),
-    email,
+    customer: {
+      ...(firstName ? { first_name: firstName } : {}),
+      ...(lastName ? { last_name: lastName } : {}),
+      email,
+    },
   };
 };
