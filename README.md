@@ -89,7 +89,6 @@ the SDK.
 | `email`        | `true`                      |
 | `phoneCode`    | Required if email is absent |
 | `phoneNumber`  | Required if email is absent |
-| `phoneCode`    | Required if email is absent |
 | `addressLine1` | `false`                     |
 | `addressLine2` | `false`                     |
 | `city`         | `false`                     |
