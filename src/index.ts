@@ -24,6 +24,14 @@ export const AsyncpayCheckout = async ({
   environment = "dev",
   ...args
 }: AsyncpayCheckoutInterface) => {
+  if (document.getElementById("asyncpay-checkout-sdk-wrapper")) {
+    throw new Error("A checkout process has already been initiated");
+  }
+  if (sessionStorage.getItem("asyncpay-checkout-is-in-session")) {
+    throw new Error(
+      "A checkout process is already in session. You cannot run two checkout sessions simultaneously"
+    );
+  }
   /**
    * 1. Validate arguments
    * 2. Generate checkout url
@@ -53,6 +61,8 @@ export const AsyncpayCheckout = async ({
       "Please provide a public key `publicKey` to the AsyncpayCheckout function."
     );
   }
+
+  sessionStorage.setItem("asyncpay-checkout-is-in-session", "true");
 
   // Validate Amount
   // Validate the description
@@ -91,13 +101,15 @@ export const AsyncpayCheckout = async ({
   });
   const body = await response.json();
   if (!response.ok) {
+    sessionStorage.removeItem("asyncpay-checkout-is-in-session");
     throw Error(`Error-Code: ${body.error_code} - ` + body.error_description);
   }
   if (body.data.should_redirect) {
+    sessionStorage.removeItem("asyncpay-checkout-is-in-session");
     location.href = body.data.action;
   } else {
     const checkoutIframeWrapper = document.createElement("div");
-    checkoutIframeWrapper.id = "asyncpay-checkout-wrapper";
+    checkoutIframeWrapper.id = "asyncpay-checkout-sdk-wrapper";
     checkoutIframeWrapper.style.position = "fixed";
     checkoutIframeWrapper.style.top = "0";
     checkoutIframeWrapper.style.left = "0";
@@ -141,6 +153,7 @@ export const AsyncpayCheckout = async ({
       switch (eventData.eventType) {
         case "closeIframe":
           if (checkoutIframeWrapper && checkoutIframeWrapper.parentNode) {
+            sessionStorage.removeItem("asyncpay-checkout-is-in-session");
             checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
           }
           if (eventData.intent === "cancel") {
@@ -161,13 +174,28 @@ export const AsyncpayCheckout = async ({
           loader.style.display = "flex";
           break;
         case "paymentSuccessful":
+          sessionStorage.removeItem("asyncpay-checkout-is-in-session");
+
           if (successURL) {
+            if (checkoutIframeWrapper && checkoutIframeWrapper.parentNode) {
+              checkoutIframeWrapper.parentNode.removeChild(
+                checkoutIframeWrapper
+              );
+            }
+
             location.href = successURL;
           } else {
+            if (checkoutIframeWrapper && checkoutIframeWrapper.parentNode) {
+              checkoutIframeWrapper.parentNode.removeChild(
+                checkoutIframeWrapper
+              );
+            }
+
             if (onSuccess && typeof onSuccess === "function") {
               onSuccess(eventData.paymentRequest);
             }
           }
+
           break;
         case "redirect":
           location.href = eventData.url;
