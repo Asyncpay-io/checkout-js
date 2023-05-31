@@ -24,12 +24,17 @@ export const AsyncpayCheckout = async ({
   environment = "dev",
   ...args
 }: AsyncpayCheckoutInterface) => {
+  window.addEventListener("beforeunload", function (e) {
+    sessionStorage.removeItem("asyncpay-checkout-is-in-session");
+  });
   if (document.getElementById("asyncpay-checkout-sdk-wrapper")) {
-    throw new Error("A checkout process has already been initiated");
+    throw new Error(
+      "A checkout process has already been initiated. You cannot run multiple checkout sessions simultaneously."
+    );
   }
   if (sessionStorage.getItem("asyncpay-checkout-is-in-session")) {
     throw new Error(
-      "A checkout process is already in session. You cannot run two checkout sessions simultaneously"
+      "A checkout process is already in session. You cannot run multiple checkout sessions simultaneously."
     );
   }
   /**
