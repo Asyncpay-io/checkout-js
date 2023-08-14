@@ -21,7 +21,7 @@ export const AsyncpayCheckout = async ({
   onClose,
   onSuccess,
   logo,
-  environment = "dev",
+  environment = "prod",
 }: AsyncpayCheckoutInterface) => {
   const unsetCheckoutSession = (error: any = null) => {
     sessionStorage.removeItem("asyncpay-checkout-is-in-session");
