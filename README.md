@@ -25,7 +25,7 @@ You can see a demo of our checkout experience here: [https://asyncpay.io/demo](h
 1. To install this SDK, run the npm command
 
 ```
-$ npm install @asyncpay/checkout-js
+$ npm install @asyncpay/checkout
 ```
 
 2. The SDK exports a function that can be invoked at anytime to load a checkout experience.
