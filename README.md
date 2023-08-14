@@ -1,5 +1,5 @@
 <p align="center">    
-   <img title="Asyncpay" height="50" src="https://lh3.googleusercontent.com/drive-viewer/AFGJ81pjQh0DLFoJEg7GGLwQXHmhB0AQio2DtyxpQbzQD5eMX41rJ0de1BVePqbzvmOpJJsFU2ApUlRJdi04MY5bc6cGR8jefQ=s1600" />  
+   <img title="Asyncpay" height="50" src="https://asyncpay-imgs.s3.amazonaws.com/Asyncpayyy_Logo.png" />  
 </p>
 
 # Asyncpay Checkout SDK
@@ -25,7 +25,7 @@ You can see a demo of our checkout experience here: [https://asyncpay.io/demo](h
 1. To install this SDK, run the npm command
 
 ```
-$ npm install @asyncpay/checkout-js
+$ npm install @asyncpay/checkout
 ```
 
 2. The SDK exports a function that can be invoked at anytime to load a checkout experience.
