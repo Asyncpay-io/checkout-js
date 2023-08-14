@@ -79,8 +79,7 @@ logo,
 
 ## Available Customer Object Options
 
-The table below shows the properties that can be attached to a `customer` object if you choose to use that to initialize
-the SDK.
+The table below shows the properties that can be attached to a `customer` object if you choose to use that to initialize a payment request with the SDK.
 
 | Name           | Required                    |
 |----------------|-----------------------------|
