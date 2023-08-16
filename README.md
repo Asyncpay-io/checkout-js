@@ -47,18 +47,18 @@ You can trigger the function on the click of a button or the submission of a for
 
 Listed below are the available config options for the `AsyncpayCheckout` function exported by the checkout SDK.
 
-publicKey,
-amount,
-description,
-customerEmail,
-customerUUID,
-customer,
-paymentChannel,
-successURL,
-cancelURL,
-onCancel,
-onSuccess,
-logo,
+`publicKey`,
+`amount`,
+`description`,
+`customerEmail`,
+`customerUUID`,
+`customer`,
+`paymentChannel`,
+`successURL`,
+`cancelURL`,
+`onCancel`,
+`onSuccess`,
+`logo`,
 
 | Name             | Required                                                 | Description                                                                                                                                                         |
 |------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
