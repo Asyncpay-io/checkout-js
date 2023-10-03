@@ -10,6 +10,9 @@ export const AsyncpayCheckout = async ({
   publicKey,
   reference,
   amount,
+  subscriptionPlanUUID,
+  subscriptionPlanLink,
+  currency,
   description,
   customerEmail,
   customerUUID,
@@ -82,6 +85,31 @@ export const AsyncpayCheckout = async ({
         "Please provide a public key `publicKey` to the AsyncpayCheckout function."
       );
     }
+    if (!subscriptionPlanUUID && !subscriptionPlanLink) {
+      if (currency) {
+        const pattern = /^[A-Z]{3}$/;
+
+        // Test the string against the pattern.
+        if (!pattern.test(currency)) {
+          unsetCheckoutSession(
+            "Please provide a valid currency in a valid Alphabetic ISO 4217 e.g NGN."
+          );
+        }
+      }
+      if (!amount) {
+        unsetCheckoutSession("Please provide a valid amount.");
+      } else {
+        const pattern = /^(?:\d+|\d+\.\d{2})$/;
+        let testAmount = amount;
+        if (typeof testAmount === "number") {
+          testAmount = testAmount + "";
+        }
+        // Test the value against the pattern.
+        if (!pattern.test(testAmount) && parseFloat(testAmount) >= 0) {
+          unsetCheckoutSession("Please provide a valid amount.");
+        }
+      }
+    }
   } catch (error) {
     unsetCheckoutSession(error);
   }
@@ -114,8 +142,18 @@ export const AsyncpayCheckout = async ({
         method: "POST",
         body: JSON.stringify({
           ...customerOBJ,
-          amount: typeof amount === "number" ? amount : parseFloat(amount),
-          description,
+          ...(subscriptionPlanUUID || subscriptionPlanLink
+            ? subscriptionPlanLink
+              ? {
+                  subscription_plan_link: subscriptionPlanLink,
+                }
+              : { subscription_plan_uuid: subscriptionPlanUUID }
+            : {
+                amount:
+                  typeof amount === "number" ? amount : parseFloat(amount),
+                ...(currency ? { currency } : {}),
+                description,
+              }),
           payment_channel: paymentChannel,
           success_redirect_url: successURL,
           cancel_redirect_url: cancelURL,
@@ -147,7 +185,7 @@ export const AsyncpayCheckout = async ({
       checkoutIframeWrapper.style.height = "100%";
       checkoutIframeWrapper.style.zIndex = "99999999999";
       checkoutIframeWrapper.style.border = "none";
-      checkoutIframeWrapper.style.background = "transparent";
+      checkoutIframeWrapper.style.background = "rgba(0,0,0,0.5)";
       const loader = document.createElement("div");
       loader.style.display = "flex";
       loader.style.alignItems = "center";
