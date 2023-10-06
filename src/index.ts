@@ -6,6 +6,8 @@ import {
 } from "./modules/validators";
 import { AsyncpayCheckoutInterface } from "../types";
 
+import { Error } from "../types";
+
 export const AsyncpayCheckout = async ({
   publicKey,
   reference,
@@ -22,6 +24,7 @@ export const AsyncpayCheckout = async ({
   cancelURL,
   onCancel,
   onClose,
+  onError,
   onSuccess,
   logo,
   environment = "prod",
@@ -35,6 +38,20 @@ export const AsyncpayCheckout = async ({
       checkoutIframeWrapper.parentNode.removeChild(checkoutIframeWrapper);
     }
     if (error) {
+      if (typeof onError === "function") {
+        if (typeof error === "object") {
+          if (error.error && error.error_code && error.error_description) {
+            onError({
+              error: error.error,
+              error_code: error.error_code,
+              error_description: error.error_description,
+            });
+          } else {
+          }
+        } else {
+        }
+        onError(error);
+      }
       if (typeof error === "string") {
         throw new Error(error);
       } else {
@@ -46,14 +63,20 @@ export const AsyncpayCheckout = async ({
     sessionStorage.removeItem("asyncpay-checkout-is-in-session");
   });
   if (document.getElementById("asyncpay-checkout-sdk-wrapper")) {
-    unsetCheckoutSession(
-      "A checkout process has already been initiated. You cannot run multiple checkout sessions simultaneously."
-    );
+    unsetCheckoutSession({
+      error: "SDK_ERROR_CHECKOUT_IN_SESSION",
+      error_code: "00002",
+      error_description:
+        "A checkout process has already been initiated. You cannot run multiple checkout sessions simultaneously.",
+    });
   }
   if (sessionStorage.getItem("asyncpay-checkout-is-in-session")) {
-    unsetCheckoutSession(
-      "A checkout process is already in session. You cannot run multiple checkout sessions simultaneously."
-    );
+    unsetCheckoutSession({
+      error: "SDK_ERROR_CHECKOUT_IN_SESSION",
+      error_code: "00002",
+      error_description:
+        "A checkout process has already been initiated. You cannot run multiple checkout sessions simultaneously.",
+    });
   }
   /**
    * 1. Validate arguments
@@ -81,9 +104,12 @@ export const AsyncpayCheckout = async ({
       customerOBJ = validateCustomer(customer);
     }
     if (!publicKey) {
-      unsetCheckoutSession(
-        "Please provide a public key `publicKey` to the AsyncpayCheckout function."
-      );
+      unsetCheckoutSession({
+        error: "SDK_VALIDATION_ERROR",
+        error_code: "00001",
+        error_description:
+          "Please provide a public key `publicKey` to the AsyncpayCheckout function.",
+      });
     }
     if (!subscriptionPlanUUID && !subscriptionPlanLink) {
       if (currency) {
@@ -91,13 +117,20 @@ export const AsyncpayCheckout = async ({
 
         // Test the string against the pattern.
         if (!pattern.test(currency)) {
-          unsetCheckoutSession(
-            "Please provide a valid currency in a valid Alphabetic ISO 4217 e.g NGN."
-          );
+          unsetCheckoutSession({
+            error: "SDK_VALIDATION_ERROR",
+            error_code: "00001",
+            error_description:
+              "Please provide a valid currency in a valid Alphabetic ISO 4217 e.g NGN.",
+          });
         }
       }
       if (!amount) {
-        unsetCheckoutSession("Please provide a valid amount.");
+        unsetCheckoutSession({
+          error: "SDK_VALIDATION_ERROR",
+          error_code: "00001",
+          error_description: "Please provide a valid amount.",
+        });
       } else {
         const pattern = /^(?:\d+|\d+\.\d{2})$/;
         let testAmount = amount;
@@ -106,12 +139,20 @@ export const AsyncpayCheckout = async ({
         }
         // Test the value against the pattern.
         if (!pattern.test(testAmount) && parseFloat(testAmount) >= 0) {
-          unsetCheckoutSession("Please provide a valid amount.");
+          unsetCheckoutSession({
+            error: "SDK_VALIDATION_ERROR",
+            error_code: "00001",
+            error_description: "Please provide a valid amount.",
+          });
         }
       }
     }
   } catch (error) {
-    unsetCheckoutSession(error);
+    unsetCheckoutSession({
+      error: "SDK_VALIDATION_ERROR",
+      error_code: "00001",
+      error_description: error,
+    });
   }
 
   sessionStorage.setItem("asyncpay-checkout-is-in-session", "true");
@@ -168,9 +209,7 @@ export const AsyncpayCheckout = async ({
     );
     const body = await response.json();
     if (!response.ok) {
-      unsetCheckoutSession(
-        `Error-Code: ${body.error_code} - ` + body.error_description
-      );
+      unsetCheckoutSession(body);
     }
     if (body.data.should_redirect) {
       unsetCheckoutSession();
@@ -259,6 +298,10 @@ export const AsyncpayCheckout = async ({
       });
     }
   } catch (err) {
-    unsetCheckoutSession(err);
+    unsetCheckoutSession({
+      error: "SDK_ERROR",
+      error_code: "0003",
+      error_description: err,
+    });
   }
 };

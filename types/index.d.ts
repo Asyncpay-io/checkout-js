@@ -21,7 +21,14 @@ export type AsyncpayCheckoutInterface = {
     cancelURL?: string;
     onClose?: Function;
     onCancel?: Function;
+    onError?: Function;
     onSuccess?: Function;
     logo?: string;
     environment?: "dev" | "local" | "prod";
 };
+
+export type Error = {
+    error: string;
+    error_code: string;
+    error_description: string;
+}
