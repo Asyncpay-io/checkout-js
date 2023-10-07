@@ -52,30 +52,35 @@ Listed below are the available config options for the `AsyncpayCheckout` functio
 `description`,
 `customerEmail`,
 `customerUUID`,
+`subscriptionPlanUUID`,
 `customer`,
 `paymentChannel`,
 `successURL`,
 `cancelURL`,
 `onCancel`,
+`onError`,
 `onSuccess`,
 `logo`,
 
-| Name             | Required                                                 | Description                                                                                                                                                         |
-|------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `publicKey`      | `true`                                                   | The public key of your business gotten from the [Asyncpay](https://asyncpay.io) dashboard                                                                           |
-| `amount`         | `true`                                                   | The amount you want to charge the user                                                                                                                              |
-| `description`    | `false`                                                  | The description of the transaction                                                                                                                                  |
-| `customerEmail`  | required if `customerUUID` and `customer` is absent      | The email of the customer you want to charge                                                                                                                        |
-| `customerUUID`   | required if `customerEmail` and `customer` is absent     | The UUID of the customer you want to charge                                                                                                                         |
-| `customer`       | required if `customerEmail` and `customerUUID` is absent | The customer object of the customer. Using this option would create a customer on the user                                                                          |
-| `reference`      | `false`                                                  | A uniquely generated reference to be tied to the payment request for your checkout session.                                                                         |
-| `paymentChannel` | `false`                                                  | The payment channel you want to route the payment to. If you set a value here, the checkout goes staright to that payment channel without giving the user a choice. |
-| `successURL`     | `false`                                                  | The url to redirect the user to after a successful payment                                                                                                          |
-| `cancelURL`      | `false`                                                  | The url to redirect the customer to if the user cancels the checkout page                                                                                           |
-| `onCancel`       | `false`                                                  | A javascript function to call after the user cancels the checkout page                                                                                              |
-| `onClose`        | `false`                                                  | A javascript function to call whenever the checkout page closes irrespective of why the checkout page closed.                                                       |
-| `onSuccess`      | `false`                                                  | A javascript function to call after the user has successfully completed checkout                                                                                    |
-| `logo`           | `false`                                                  | The logo to show up on the payment page if you want to override the logo set on the dashboard                                                                       |
+| Name                   | Required                                                           | Description                                                                                                                                                         |
+|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `publicKey`            | `true`                                                             | The public key of your business gotten from the [Asyncpay](https://asyncpay.io) dashboard.                                                                          |
+| `amount`               | `true`  but not considered when `subscriptionPlanUUID` is present  | The amount you want to charge the user.                                                                                                                             |
+| `currency`             | `false`  but not considered when `subscriptionPlanUUID` is present | The amount you want to charge the user.                                                                                                                             |
+| `description`          | `false`  but not considered when `subscriptionPlanUUID` is present | The description of the transaction.                                                                                                                                 |
+| `customerEmail`        | required if `customerUUID` and `customer` is absent                | The email of the customer you want to charge.                                                                                                                       |
+| `customerUUID`         | required if `customerEmail` and `customer` is absent               | The UUID of the customer you want to charge.                                                                                                                        |
+| `subscriptionPlanUUID` | `false` prohibits `amount`, `currency` and `description`           | The UUID of the subscription plan you want to subscribe your customer to.                                                                                           |
+| `customer`             | required if `customerEmail` and `customerUUID` is absent           | The customer object of the customer. Using this option would create a customer on the user.                                                                         |
+| `reference`            | `false`                                                            | A uniquely generated reference to be tied to the payment request for your checkout session.                                                                         |
+| `paymentChannel`       | `false`                                                            | The payment channel you want to route the payment to. If you set a value here, the checkout goes staright to that payment channel without giving the user a choice. |
+| `successURL`           | `false`                                                            | The url to redirect the user to after a successful payment.                                                                                                         |
+| `cancelURL`            | `false`                                                            | The url to redirect the customer to if the user cancels the checkout page.                                                                                          |
+| `onCancel`             | `false`                                                            | A javascript function to call after the user cancels the checkout page.                                                                                             |
+| `onClose`              | `false`                                                            | A javascript function to call whenever the checkout page closes irrespective of why the checkout page closed.                                                       |
+| `onError`              | `false`                                                            | A javascript function to call whenever there is an error during the checkout process. An argument with a type of `Error` would be supplied to describe the error.   |
+| `onSuccess`            | `false`                                                            | A javascript function to call after the user has successfully completed checkout.                                                                                   |
+| `logo`                 | `false`                                                            | The logo to show up on the payment page if you want to override the logo set on the dashboard.                                                                      |
 
 ## Available Customer Object Options
 
