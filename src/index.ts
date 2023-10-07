@@ -4,9 +4,31 @@ import {
   validateEmail,
   validateUUID,
 } from "./modules/validators";
-import { AsyncpayCheckoutInterface } from "../types";
+import { AsyncpayCheckoutInterface, Error } from "../types";
 
-import { Error } from "../types";
+const resolveError = (error: any): Error => {
+  if (typeof error === "object") {
+    if (error.error && error.error_code && error.error_description) {
+      return {
+        error: error.error,
+        error_code: error.error_code,
+        error_description: error.error_description,
+      };
+    } else {
+      return {
+        error: "SDK_ERROR",
+        error_code: "0003",
+        error_description: error,
+      };
+    }
+  } else {
+    return {
+      error: "SDK_ERROR",
+      error_code: "0003",
+      error_description: error,
+    };
+  }
+};
 
 export const AsyncpayCheckout = async ({
   publicKey,
@@ -39,23 +61,20 @@ export const AsyncpayCheckout = async ({
     }
     if (error) {
       if (typeof onError === "function") {
-        if (typeof error === "object") {
-          if (error.error && error.error_code && error.error_description) {
-            onError({
-              error: error.error,
-              error_code: error.error_code,
-              error_description: error.error_description,
-            });
-          } else {
-          }
-        } else {
+        if (!(typeof error === "object" && error.doNotThrow)) {
+          onError(resolveError(error));
         }
-        onError(error);
       }
       if (typeof error === "string") {
-        throw new Error(error);
+        throw {
+          ...resolveError(error),
+          doNotThrow: true,
+        };
       } else {
-        throw error;
+        throw {
+          ...error,
+          doNotThrow: true,
+        };
       }
     }
   };
@@ -298,10 +317,6 @@ export const AsyncpayCheckout = async ({
       });
     }
   } catch (err) {
-    unsetCheckoutSession({
-      error: "SDK_ERROR",
-      error_code: "0003",
-      error_description: err,
-    });
+    unsetCheckoutSession(err);
   }
 };
