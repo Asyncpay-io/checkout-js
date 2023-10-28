@@ -217,6 +217,9 @@ export const AsyncpayCheckout = async ({
           payment_channel: paymentChannel,
           success_redirect_url: successURL,
           cancel_redirect_url: cancelURL,
+          ...(description
+            ? { description }
+            : { description: "Checkout from Asyncpay SDK" }),
           reference,
           logo,
         }),
