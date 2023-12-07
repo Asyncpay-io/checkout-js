@@ -31,7 +31,7 @@ $ npm install @asyncpay/checkout
 2. The SDK exports a function that can be invoked at anytime to load a checkout experience.
 
 ```js
-import {AsyncpayCheckout} from "@asyncpay/checkout-js";
+import {AsyncpayCheckout} from "@asyncpay/checkout";
 
 AsyncpayCheckout({
     publicKey:
