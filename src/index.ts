@@ -151,7 +151,7 @@ export const AsyncpayCheckout = async ({
           error_description: "Please provide a valid amount.",
         });
       } else {
-        const pattern = /^(?:\d+|\d+\.\d{2})$/;
+        const pattern = /^\d+(\.\d{1,3})?$/;
         let testAmount = amount;
         if (typeof testAmount === "number") {
           testAmount = testAmount + "";
