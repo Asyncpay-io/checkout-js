@@ -262,7 +262,12 @@ export const AsyncpayCheckout = async ({
       const iframe = document.createElement("iframe");
       iframe.style.opacity = "0";
       iframe.style.transition = ".8s";
-      iframe.src = body.data.action + `?publickey=${publicKey}`;
+      iframe.src =
+        body.data.action +
+        (body.data.action.includes("publickey")
+          ? ""
+          : `?publickey=${publicKey}`);
+
       iframe.width = "100%";
       iframe.height = "100%";
       iframe.style.border = "none";
@@ -323,3 +328,5 @@ export const AsyncpayCheckout = async ({
     unsetCheckoutSession(err);
   }
 };
+
+(window as any).AsyncpayCheckout = AsyncpayCheckout;

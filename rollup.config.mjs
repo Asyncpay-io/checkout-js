@@ -8,5 +8,10 @@ export default {
       file: "dist/bundle.js",
       format: "cjs",
     },
+    {
+      file: "dist/bundle.umd.js",
+      format: "umd",
+      name: "browser"
+    },
   ],
 };

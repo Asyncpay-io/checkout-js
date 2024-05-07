@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 320px;
+      }
+      input {
+        margin-bottom: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="form">
+      <label for="email">Email</label>
+      <input id="email" name="email" />
+      <label for="amount">
+        Amount
+      </label>
+      <input id="amount" name="amount" />
+
+      <button>Pay</button>
+    </form>
+    <script src="../dist/bundle.umd.js"></script>
+    <script>
+      const form = document.getElementById("form");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const amount = document.getElementById('amount').value
+        const email = document.getElementById('email').value
+        console.log(email, amount)
+        AsyncpayCheckout({
+          amount: amount,
+          customerEmail: email,
+          description: "Test checkout",
+          // paymentChannel: "stripe",
+          publicKey: "async_pkt_ccdb746aabcc89f4c8270462da80e89e03263d98eef5e192e36445f502aa",
+          environment: "local",
+        });
+      });
+    </script>
+  </body>
+</html>
