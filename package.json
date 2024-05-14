@@ -1,6 +1,6 @@
 {
   "name": "@asyncpay/checkout",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "JavaScript SDK for running the Asyncpay checkout flow",
   "main": "dist/bundle.js",
   "module": "dist/bundle.js",

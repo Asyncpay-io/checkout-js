@@ -281,7 +281,13 @@ export const AsyncpayCheckout = async ({
       window.addEventListener("message", function (event) {
         let eventData = event.data;
         if (typeof eventData === "string") {
-          eventData = JSON.parse(eventData);
+          try {
+            eventData = JSON.parse(eventData);
+          } catch (err) {
+            // Do nothing since this almost definitely isn't an Asyncpay event
+            console.log(eventData);
+            return;
+          }
         }
         switch (eventData.eventType) {
           case "closeIframe":
