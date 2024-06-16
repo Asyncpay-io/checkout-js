@@ -2,6 +2,7 @@ import { svg } from "./modules/svg-strings";
 import {
   validateCustomer,
   validateEmail,
+  validateMetadata,
   validateUUID,
 } from "./modules/validators";
 import { AsyncpayCheckoutInterface, Error } from "../types";
@@ -49,6 +50,8 @@ export const AsyncpayCheckout = async ({
   onError,
   onSuccess,
   logo,
+  savePaymentMethod,
+  metadata,
   environment = "prod",
 }: AsyncpayCheckoutInterface) => {
   const unsetCheckoutSession = (error: any = null) => {
@@ -121,6 +124,9 @@ export const AsyncpayCheckout = async ({
     } else {
       // Validate the entire customer object and return an object containing the customer object that we'll later spread and send into the URL
       customerOBJ = validateCustomer(customer);
+    }
+    if (metadata) {
+      validateMetadata(metadata);
     }
     if (!publicKey) {
       unsetCheckoutSession({
@@ -222,6 +228,16 @@ export const AsyncpayCheckout = async ({
             : { description: "Checkout from Asyncpay SDK" }),
           reference,
           logo,
+          ...(savePaymentMethod !== null && savePaymentMethod !== undefined
+            ? {
+                save_payment_method: savePaymentMethod,
+              }
+            : {}),
+          ...(metadata !== null && metadata !== undefined
+            ? {
+                meta_data: metadata,
+              }
+            : {}),
         }),
         headers: {
           Authentication: `Bearer ${publicKey}`,

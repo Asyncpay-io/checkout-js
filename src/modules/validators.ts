@@ -51,3 +51,21 @@ export const validateCustomer = (customer: Customer) => {
     },
   };
 };
+
+export const validateMetadata = (obj: { [key: string]: string }) => {
+  if (typeof obj !== "object" || Array.isArray(obj) || obj === null) {
+    throw Error(
+      "Please enter valid metadata. It must consist of an object whose the keys and values must be strings."
+    );
+  }
+
+  for (const key in obj) {
+    if (typeof key !== "string" || typeof obj[key] !== "string") {
+      throw Error(
+        "Please enter valid metadata. It must consist of an object whose the keys and values must be strings."
+      );
+    }
+  }
+
+  return obj;
+};

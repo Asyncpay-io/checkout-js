@@ -18,9 +18,7 @@
     <form id="form">
       <label for="email">Email</label>
       <input id="email" name="email" />
-      <label for="amount">
-        Amount
-      </label>
+      <label for="amount"> Amount </label>
       <input id="amount" name="amount" />
 
       <button>Pay</button>
@@ -30,14 +28,28 @@
       const form = document.getElementById("form");
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        const amount = document.getElementById('amount').value
-        const email = document.getElementById('email').value
-        console.log(email, amount)
+        const amount = document.getElementById("amount").value;
+        const email = document.getElementById("email").value;
+        console.log(email, amount);
         AsyncpayCheckout({
           amount: amount,
           customerEmail: email,
           description: "Test checkout",
-          publicKey: "async_pkt_e65bd076693fcd9e20a70c44d4e2ce1b8baf4c1d4c775ae7c66bb5af2f09",
+          paymentChannel: "flutterwave",
+          // publicKey: "async_pkt_b878f627f05e38739781011fc350e863660a5edeace6be2f20c07b58b46a",
+          publicKey:
+            "async_pkt__f18e083b899f3dc7cd5eaa92942d02a4c9930fee7d7cdb5bcc2fa30092ed",
+          environment: "local",
+          onCancel: () => {
+            console.log("I got cancelled my gee");
+          },
+          onSuccess: () => {
+            console.log("I got successfully done my gee");
+          },
+          metadata: {
+            "trans_id": "333",
+            "address": "5 New World Calm"
+          }
         });
       });
     </script>
