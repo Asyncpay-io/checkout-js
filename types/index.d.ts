@@ -10,6 +10,7 @@ export type AsyncpayCheckoutInterface = {
   reference?: string;
   subscriptionPlanUUID?: string;
   subscriptionPlanLink?: string;
+  extendSubscriptionBy?: string | number;
   currency: ?string;
   amount: number | string;
   description?: string;
