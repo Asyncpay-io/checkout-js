@@ -37,6 +37,7 @@ export const AsyncpayCheckout = async ({
   amount,
   subscriptionPlanUUID,
   subscriptionPlanLink,
+  extendSubscriptionBy,
   currency,
   description,
   customerEmail,
@@ -213,7 +214,9 @@ export const AsyncpayCheckout = async ({
               ? {
                   subscription_plan_link: subscriptionPlanLink,
                 }
-              : { subscription_plan_uuid: subscriptionPlanUUID }
+              : {
+                  subscription_plan_uuid: subscriptionPlanUUID,
+                }
             : {
                 amount:
                   typeof amount === "number" ? amount : parseFloat(amount),
@@ -228,6 +231,14 @@ export const AsyncpayCheckout = async ({
             : { description: "Checkout from Asyncpay SDK" }),
           reference,
           logo,
+          ...(extendSubscriptionBy
+            ? {
+                extend_subscription_by:
+                  typeof extendSubscriptionBy === "string"
+                    ? parseInt(extendSubscriptionBy)
+                    : extendSubscriptionBy,
+              }
+            : {}),
           ...(savePaymentMethod !== null && savePaymentMethod !== undefined
             ? {
                 save_payment_method: savePaymentMethod,

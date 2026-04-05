@@ -11,7 +11,11 @@ export default {
     {
       file: "dist/bundle.umd.js",
       format: "umd",
-      name: "browser"
+      name: "browser",
+    },
+    {
+      file: "dist/bundle.esm.js", // add this
+      format: "esm",
     },
   ],
 };
